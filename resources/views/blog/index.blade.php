@@ -1,30 +1,59 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="w-4/5 m-auto text-center">
-  <div class="py-15 border-b border-gray-200">
+  <div class="py-15 border-b border-gray-200 text-center">
     <h1 class="text-6xl">
       Blog Posts
     </h1>
   </div>
 
-  <div class="sm:grid grid-cols-2 gap-20 w-4/5 mx-auto py-15 border-b border-gray-200 text-left">
-    <div>
-      <img class="" src="https://cdn.pixabay.com/photo/2017/02/25/17/19/keyboard-2098301_960_720.jpg" alt="Laptop Image">
-    </div>
-    <div>
-      <h2 class="text-gray-700 font-bold text-2xl pb-4">Learn how to write Laravel coded</h2>
-
-      <span class="text-gray-500">
-        By <span class="font-bold italic text-gray-800">Pato Gordo</span>, 1 day ago
-      </span>
-
-      <p class="text-gray-700 pt-8 pb-10 leading-6 font-light text-left">
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi fugiat, illum doloribus minus eligendi autem ipsam, veritatis error nostrum optio reprehenderit. Ea perferendis optio inventore exercitationem, deleniti totam dignissimos numquam nihil hic quae necessitatibus, distinctio veniam. Harum optio tempore fugiat cupiditate quo officiis nihil possimus quod nulla accusantium, minima magnam cum reiciendis dicta, ratione aliquam adipisci quibusdam ex dolore distinctio!
+  @if (session()->has('message'))
+    <div class="w-4/5 margin-auto mt-10 pl-2">
+      <p class="w-1/6 mb-4 text-gray-50 bg-green-500 rounded-2xl py-4 px-5">
+        {{ session()->get('message') }}
       </p>
+    </div>      
+  @endif
 
-      <a href="" class="uppercase bg-blue-500 text-gray-100 text-lg text-extrabold py-3 px-6 rounded-3xl">Keep Reading</a>
+  @if (Auth::check())
+    <div class="pt-15 m-auto w-4/5">
+      <a href="/blog/create" class="bg-blue-500 uppercase bg-transparent text-gray-100 text-xs font-extrabold py-3 px-5 rounded-3xl">Create Post</a>
     </div>
-  </div>
-</div>
+  @endif
+
+  @foreach ($posts as $post)
+    <div class="sm:grid grid-cols-2 gap-20 w-4/5 mx-auto py-15 border-b border-gray-200 text-left">
+      <div>
+        <img class="" src="/images/{{ $post->image_path }}" alt="{{ $post->title }}">
+      </div>
+      <div>
+        <h2 class="text-gray-700 font-bold text-2xl pb-4">{{ $post->title }}</h2>
+
+        <span class="text-gray-500">
+          By <span class="font-bold italic text-gray-800">{{ $post->user->name }}</span>, Created on {{ date('jS M Y', strtotime($post->updated_at)) }}
+        </span>
+
+        <p class="text-gray-700 pt-8 pb-10 leading-6 font-light text-left">
+          {{ $post->description }}
+        </p>
+
+        <a href="/blog/{{ $post->slug }}" class="uppercase bg-blue-500 text-gray-100 text-lg text-extrabold py-3 px-6 rounded-3xl">Keep Reading</a>
+
+        @if (isset(Auth::user()->id) && Auth::user()->id == $post->user_id)
+          <span class="float-right">
+            <a href="/blog/{{ $post->slug }}/edit" class="text-gray-700 italic hover:text-gray-900 pb-1 border-b-2">Edit</a>
+          </span>
+
+          <span class="float-right">
+            <form action="/blog/{{ $post->slug }}" method="POST">
+              @csrf
+              @method('delete')
+
+              <button class="text-red-500 pr-3 outline-none" type="submit">Delete</button>
+            </form>
+          </span>
+        @endif
+      </div>
+    </div>
+  @endforeach
 @endsection

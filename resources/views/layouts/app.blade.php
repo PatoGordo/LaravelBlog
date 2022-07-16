@@ -28,18 +28,18 @@
                     @guest
                         <a class="no-underline hover:underline" href="/">Home</a>
                         <a class="no-underline hover:underline" href="/blog">Blog</a>
-                        <a class="no-underline hover:underline" href="{{ route('login') }}">{{ __('Login') }}</a>
+                        <a class="no-underline hover:underline" href="/login">{{ __('Login') }}</a>
                         @if (Route::has('register'))
-                            <a class="no-underline hover:underline" href="{{ route('register') }}">{{ __('Register') }}</a>
+                            <a class="no-underline hover:underline" href="/register">{{ __('Register') }}</a>
                         @endif
                     @else
                         <span>{{ Auth::user()->name }}</span>
 
-                        <a href="{{ route('logout') }}"
+                        <a href="/logout"
                            class="no-underline hover:underline"
                            onclick="event.preventDefault();
                                 document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                        <form id="logout-form" action="/logout" method="POST" class="hidden">
                             {{ csrf_field() }}
                         </form>
                     @endguest
